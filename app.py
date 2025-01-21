@@ -1,4 +1,5 @@
 import streamlit as st
+import torch
 from ultralytics import YOLO
 import numpy as np
 from PIL import Image
@@ -12,19 +13,18 @@ import av
 
 st.set_page_config(page_title="FIAP VisionGuard - Detector", layout="wide")
 
-model_name = 'best_Jan20_knife.pt'
+model_name = 'best_finetunned.pt'
 
 @st.cache_resource
 def load_model():
     model = YOLO(model_name)
     # Move model to GPU if available
-    #device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    model.to('cpu')
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    model.to(device)
     return model
 
 try:
     model = load_model()
-    #st.success("Model loaded successfully!")
 except Exception as e:
     st.error(f"Error loading model: {e}")
     st.stop()
@@ -41,14 +41,14 @@ confidence_threshold = st.slider(
 )
 
 # File uploader for images and videos
-uploaded_file = st.file_uploader("Carregar imagem ou vídeo", type=['jpg', 'jpeg', 'png', 'mp4', 'avi', 'mov'])
+uploaded_file = st.file_uploader("Carregar imagem ou vídeo", type=['jpg', 'jpeg', 'mp4'])
 
 if uploaded_file is not None:
     # Get file extension
     file_extension = uploaded_file.name.split('.')[-1].lower()
     
     # Handle video files
-    if file_extension in ['mp4', 'avi', 'mov']:
+    if file_extension in ['mp4']:
         # Save uploaded video to temp file
         with open("temp_video.mp4", "wb") as f:
             f.write(uploaded_file.read())
@@ -178,6 +178,14 @@ def video_frame_callback(frame):
 if st.button("Use Webcam"):
     webrtc_streamer(
         key="yolo_detection",
-        video_frame_callback=video_frame_callback
+        video_frame_callback=video_frame_callback,
+        rtc_configuration={  # Add WebRTC configuration
+            "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+        },
+        media_stream_constraints={
+            "video": True,
+            "audio": False
+        },
+        async_processing=True
     )
     
