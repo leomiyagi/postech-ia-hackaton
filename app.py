@@ -3,7 +3,7 @@ from ultralytics import YOLO
 import numpy as np
 from PIL import Image
 import cv2
-#import torch
+import torch
 from tempfile import NamedTemporaryFile
 import os
 from pathlib import Path
@@ -16,19 +16,18 @@ st.set_page_config(page_title="FIAP VisionGuard - Detector", layout="wide")
 # Carregue o estilo personalizado
 load_css("style.css")
 
-model_name = 'best_Jan20_knife.pt'
+model_name = 'best_finetunned.pt'
 
 @st.cache_resource
 def load_model():
     model = YOLO(model_name)
     # Move model to GPU if available
-    #device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    model.to('cpu')
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    model.to(device)
     return model
 
 try:
     model = load_model()
-    #st.success("Model loaded successfully!")
 except Exception as e:
     st.error(f"Error loading model: {e}")
     st.stop()
@@ -49,14 +48,14 @@ status_placeholder = st.empty()
 msg_normal(status_placeholder)
 
 # File uploader for images and videos
-uploaded_file = st.file_uploader("Carregar imagem ou vídeo", type=['jpg', 'jpeg', 'png', 'mp4', 'avi', 'mov'])
+uploaded_file = st.file_uploader("Carregar imagem ou vídeo", type=['jpg', 'jpeg', 'mp4'])
 
 if uploaded_file is not None:
     # Get file extension
     file_extension = uploaded_file.name.split('.')[-1].lower()
     
     # Handle video files
-    if file_extension in ['mp4', 'avi', 'mov']:
+    if file_extension in ['mp4']:
         # Save uploaded video to temp file
         with open("temp_video.mp4", "wb") as f:
             f.write(uploaded_file.read())
@@ -144,11 +143,11 @@ if uploaded_file is not None:
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("Imagem original")
+            st.subheader("Original Image")
             st.image(image, use_container_width=True)
         
         with col2:
-            st.subheader("Objeto detectado")
+            st.subheader("Detected Objects")
             try:
                 # Run inference
                 results = model(image_np)
@@ -170,10 +169,10 @@ if uploaded_file is not None:
                         
                         if confidence >= confidence_threshold:
                             alerta_ativado = True
-
+                        
                 else:
-                    st.write("Nenhum objeto detectado")
-                
+                    st.write("No objects detected")
+                    
                 # Atualiza o status com base nas detecções
                 if alerta_ativado:
                     msg_alerta(status_placeholder) # Exibe alerta intermitente
@@ -198,6 +197,14 @@ def video_frame_callback(frame):
 if st.button("Use Webcam"):
     webrtc_streamer(
         key="yolo_detection",
-        video_frame_callback=video_frame_callback
+        video_frame_callback=video_frame_callback,
+        rtc_configuration={  # Add WebRTC configuration
+            "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+        },
+        media_stream_constraints={
+            "video": True,
+            "audio": False
+        },
+        async_processing=True
     )
     
