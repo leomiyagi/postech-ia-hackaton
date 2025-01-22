@@ -17,8 +17,6 @@ st.set_page_config(page_title="FIAP VisionGuard - Detector", layout="wide")
 load_css("style.css")
 
 model_name = 'best_finetunned.pt'
-# Carregue o estilo personalizado
-load_css("style.css")
 
 @st.cache_resource
 def load_model():
