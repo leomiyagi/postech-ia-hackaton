@@ -10,10 +10,13 @@ import os
 from pathlib import Path
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 import av
+from funcoes import load_css, msg_alerta, msg_normal
 
 st.set_page_config(page_title="FIAP VisionGuard - Detector", layout="wide")
 
 model_name = 'best_finetunned.pt'
+# Carregue o estilo personalizado
+load_css("style.css")
 
 @st.cache_resource
 def load_model():
@@ -39,6 +42,10 @@ confidence_threshold = st.slider(
     step=0.05,
     help="Ajuste o nível de confiança mínimo para detecções"
 )
+
+# Div para status
+status_placeholder = st.empty()
+msg_normal(status_placeholder)
 
 # File uploader for images and videos
 uploaded_file = st.file_uploader("Carregar imagem ou vídeo", type=['jpg', 'jpeg', 'mp4'])
@@ -136,11 +143,11 @@ if uploaded_file is not None:
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("Original Image")
-            st.image(image, use_column_width=True)
+            st.subheader("Imagem original")
+            st.image(image, use_container_width=True)
         
         with col2:
-            st.subheader("Detected Objects")
+            st.subheader("Objeto detectado")
             try:
                 # Run inference
                 results = model(image_np)
@@ -149,7 +156,9 @@ if uploaded_file is not None:
                 plot = results[0].plot()
                 
                 # Display results
-                st.image(plot, use_column_width=True)
+                st.image(plot, use_container_width=True)
+                
+                alerta_ativado = False
                 
                 # Show detections
                 if len(results[0].boxes) > 0:
@@ -157,8 +166,18 @@ if uploaded_file is not None:
                     for box in results[0].boxes:
                         confidence = box.conf.item()
                         st.write(f"- Confidence: {confidence:.2%}")
+                        
+                        if confidence >= confidence_threshold:
+                            alerta_ativado = True
+
                 else:
-                    st.write("No objects detected")
+                    st.write("Nenhum objeto detectado")
+                
+                # Atualiza o status com base nas detecções
+                if alerta_ativado:
+                    msg_alerta(status_placeholder) # Exibe alerta intermitente
+                else:
+                    msg_normal(status_placeholder) # Exibe status normal
                     
             except Exception as e:
                 st.error(f"Error during inference: {e}")
