@@ -178,12 +178,6 @@ if uploaded_file is not None:
                 else:
                     msg_normal(status_placeholder) # Exibe status normal
                     
-                # Atualiza o status com base nas detecções
-                if alerta_ativado:
-                    msg_alerta(status_placeholder) # Exibe alerta intermitente
-                else:
-                    msg_normal(status_placeholder) # Exibe status normal
-                    
             except Exception as e:
                 st.error(f"Error during inference: {e}")
 
