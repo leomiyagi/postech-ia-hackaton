@@ -1,10 +1,9 @@
 import streamlit as st
-import torch
 from ultralytics import YOLO
 import numpy as np
 from PIL import Image
 import cv2
-#import torch
+import torch
 from tempfile import NamedTemporaryFile
 import os
 from pathlib import Path
@@ -14,8 +13,9 @@ from funcoes import load_css, msg_alerta, msg_normal
 
 st.set_page_config(page_title="FIAP VisionGuard - Detector", layout="wide")
 
-model_name = 'best_finetunned.pt'
 
+
+model_name = 'best_finetunned.pt'
 
 @st.cache_resource
 def load_model():
@@ -168,7 +168,6 @@ if uploaded_file is not None:
                         
                         if confidence >= confidence_threshold:
                             alerta_ativado = True
-
                 else:
                     st.write("Nenhum objeto detectado")
                 
