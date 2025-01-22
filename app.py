@@ -1,10 +1,9 @@
 import streamlit as st
-import torch
 from ultralytics import YOLO
 import numpy as np
 from PIL import Image
 import cv2
-#import torch
+import torch
 from tempfile import NamedTemporaryFile
 import os
 from pathlib import Path
@@ -13,6 +12,9 @@ import av
 from funcoes import load_css, msg_alerta, msg_normal
 
 st.set_page_config(page_title="FIAP VisionGuard - Detector", layout="wide")
+
+# Carregue o estilo personalizado
+load_css("style.css")
 
 model_name = 'best_finetunned.pt'
 # Carregue o estilo personalizado
@@ -169,10 +171,15 @@ if uploaded_file is not None:
                         
                         if confidence >= confidence_threshold:
                             alerta_ativado = True
-
                 else:
                     st.write("Nenhum objeto detectado")
                 
+                # Atualiza o status com base nas detecções
+                if alerta_ativado:
+                    msg_alerta(status_placeholder) # Exibe alerta intermitente
+                else:
+                    msg_normal(status_placeholder) # Exibe status normal
+                    
                 # Atualiza o status com base nas detecções
                 if alerta_ativado:
                     msg_alerta(status_placeholder) # Exibe alerta intermitente
