@@ -15,6 +15,7 @@ from funcoes import load_css, msg_alerta, msg_normal
 st.set_page_config(page_title="FIAP VisionGuard - Detector", layout="wide")
 
 model_name = 'best_finetunned.pt'
+
 # Carregue o estilo personalizado
 load_css("style.css")
 
