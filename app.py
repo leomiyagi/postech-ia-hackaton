@@ -10,8 +10,12 @@ import os
 from pathlib import Path
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 import av
+from funcoes import load_css, msg_normal, msg_alerta
 
 st.set_page_config(page_title="FIAP VisionGuard - Detector", layout="wide")
+
+# Carregue o estilo personalizado
+load_css("style.css")
 
 model_name = 'best_finetunned.pt'
 
@@ -39,6 +43,10 @@ confidence_threshold = st.slider(
     step=0.05,
     help="Ajuste o nível de confiança mínimo para detecções"
 )
+
+# Div para status
+status_placeholder = st.empty()
+msg_normal(status_placeholder)
 
 # File uploader for images and videos
 uploaded_file = st.file_uploader("Carregar imagem ou vídeo", type=['jpg', 'jpeg', 'mp4'])
@@ -137,7 +145,7 @@ if uploaded_file is not None:
         
         with col1:
             st.subheader("Original Image")
-            st.image(image, use_column_width=True)
+            st.image(image, use_container_width=True)
         
         with col2:
             st.subheader("Detected Objects")
@@ -149,7 +157,9 @@ if uploaded_file is not None:
                 plot = results[0].plot()
                 
                 # Display results
-                st.image(plot, use_column_width=True)
+                st.image(plot, use_container_width=True)
+                
+                alerta_ativado = False
                 
                 # Show detections
                 if len(results[0].boxes) > 0:
@@ -157,8 +167,18 @@ if uploaded_file is not None:
                     for box in results[0].boxes:
                         confidence = box.conf.item()
                         st.write(f"- Confidence: {confidence:.2%}")
+                        
+                        if confidence >= confidence_threshold:
+                            alerta_ativado = True
+                        
                 else:
                     st.write("No objects detected")
+                
+                                # Atualiza o status com base nas detecções
+                if alerta_ativado:
+                    msg_alerta(status_placeholder) # Exibe alerta intermitente
+                else:
+                    msg_normal(status_placeholder) # Exibe status normal
                     
             except Exception as e:
                 st.error(f"Error during inference: {e}")
