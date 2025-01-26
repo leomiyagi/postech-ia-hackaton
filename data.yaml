@@ -1,6 +1,0 @@
-# Path to dataset directory (absolute path or relative to where you run the training script)
-train: dataset_yolo/train/images  # train images (relative to 'path')
-val: dataset_yolo/valid/images  # val images (relative to 'path')
-
-names: 
-  0: dangerous_object

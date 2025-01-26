@@ -4,7 +4,6 @@ from ultralytics import YOLO
 import numpy as np
 from PIL import Image
 import cv2
-#import torch
 from tempfile import NamedTemporaryFile
 import os
 from pathlib import Path
@@ -183,29 +182,34 @@ if uploaded_file is not None:
             except Exception as e:
                 st.error(f"Error during inference: {e}")
 
-def video_frame_callback(frame):
-    img = frame.to_ndarray(format="bgr24")
-        
-    # Run inference
-    results = model(img)
-    
-    # Plot results
-    plot = results[0].plot()
-    
-    return av.VideoFrame.from_ndarray(plot, format="bgr24")
 
 # Add webcam support
 if st.button("Use Webcam"):
-    webrtc_streamer(
-        key="yolo_detection",
-        video_frame_callback=video_frame_callback,
-        rtc_configuration={  # Add WebRTC configuration
-            "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-        },
-        media_stream_constraints={
-            "video": True,
-            "audio": False
-        },
-        async_processing=True
-    )
-    
+    cv2.namedWindow('Detection', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('Detection', 640, 640)
+    cv2.startWindowThread()
+
+    cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+    if not cap.isOpened():
+        st.error("Error: Could not open webcam")
+        st.stop()
+
+    while True:
+        ret, frame = cap.read()  # Read frame from camera
+        if not ret:
+            print("Failed to grab frame")
+            break
+
+        # Perform YOLO inference
+        results = model(frame, conf=0.5)
+        annotated_frame = results[0].plot()
+        
+        
+        try:
+            # Display the annotated frame
+            cv2.imshow('YOLO Detection', annotated_frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):  # Press 'q' to quit
+                break
+        except Exception as e:
+            print(f"Error displaying frame: {e}")
+            break

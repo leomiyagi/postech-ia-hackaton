@@ -9,6 +9,12 @@ Pillow
 torch
 torchvision
 
+# Web dependencies
+flask
+flask-cors
+python-dotenv
+gunicorn
+
 # Streamlit and its dependencies
 streamlit
 streamlit-webrtc

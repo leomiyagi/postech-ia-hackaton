@@ -18,7 +18,11 @@ def process_webcam(model_path, conf_threshold=0.25, show_fps=True):
     
     # Initialize webcam
     print("Starting webcam...")
-    cap = cv2.VideoCapture(0)
+    cv2.namedWindow('Detection', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('Detection', 640, 640)
+    cv2.startWindowThread()
+
+    cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
     if not cap.isOpened():
         raise ValueError("Could not open webcam")
     
@@ -89,7 +93,7 @@ def process_webcam(model_path, conf_threshold=0.25, show_fps=True):
 
 def main():
     parser = argparse.ArgumentParser(description='Process webcam feed with YOLOv8 model')
-    parser.add_argument('--model', default='best.pt',
+    parser.add_argument('--model', default='best_finetunned.pt',
                       help='Path to the trained model')
     parser.add_argument('--conf', type=float, default=0.25,
                       help='Confidence threshold (default: 0.25)')
