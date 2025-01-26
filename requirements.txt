@@ -1,27 +1,21 @@
 # Core dependencies
-ultralytics
-opencv-python-headless
-numpy
-Pillow
+ultralytics>=10.0.0
+opencv-python-headless>=4.9.0.80
+numpy>=1.26.4
+Pillow>=10.2.0
 
-# Deep Learning
---extra-index-url https://download.pytorch.org/whl/cpu
-torch
-torchvision
 
 # Web dependencies
-flask
-flask-cors
-python-dotenv
-gunicorn
+flask>=3.0.2
+flask-cors>=4.0.0
+python-dotenv>=1.0.1
+gunicorn>=21.2.0
 
-# Streamlit and its dependencies
-streamlit
-streamlit-webrtc
-av
-matplotlib
-pandas
-PyYAML
+# Data processing
+matplotlib>=3.8.3
+pandas>=2.2.1
+PyYAML>=6.0.1
 
 # Optional dependencies
-psutil
+requests>=2.31.0
+

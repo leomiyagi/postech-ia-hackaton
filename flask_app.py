@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify, send_file, render_template, make_resp
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
-import torch
 from ultralytics import YOLO
 import numpy as np
 from PIL import Image
