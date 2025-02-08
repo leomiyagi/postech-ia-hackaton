@@ -65,12 +65,18 @@ async function sendAlert() {
     const notificationType = document.querySelector('input[name="notificationType"]:checked')?.value;
     const deviceId = document.getElementById('deviceId').value;
     const smsNumber = document.getElementById('smsNumber').value;
+    const emailAddress = document.getElementById('emailAddress').value;
+    const ttsMessage = document.getElementById('ttsMessage').value;
+    const soundAlertFile = document.getElementById('soundAlertFile').value;
 
     const data = {
         detection_mode: detectionMode,
         notification_type: notificationType,
         device_id: deviceId,
-        sms_number: smsNumber
+        sms_number: smsNumber,
+        email_address: emailAddress,
+        tts_message: ttsMessage,
+        sound_alert_file: soundAlertFile
     };
 
     try {
