@@ -1,0 +1,141 @@
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Notificações</h5>
+
+        <!-- Opções de notificação com duas colunas -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="notificationType" id="smsOption" value="sms">
+                    <label class="form-check-label" for="smsOption">SMS</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="notificationType" id="pushOption" value="push">
+                    <label class="form-check-label" for="pushOption">Push Notification</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="notificationType" id="emailOption" value="email">
+                    <label class="form-check-label" for="emailOption">E-mail (em construção)</label>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="notificationType" id="ttsOption" value="textToSpeech">
+                    <label class="form-check-label" for="ttsOption">Text to Speech (em construção)</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="notificationType" id="soundOption" value="soundAlert">
+                    <label class="form-check-label" for="soundOption">Aviso Sonoro (em construção)</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="notificationType" id="noneOption" value="none">
+                    <label class="form-check-label" for="noneOption">Nenhum</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inputs dinâmicos -->
+        <div id="smsInput" class="mt-2 d-none">
+            <label for="smsNumber" class="form-label">Número de telefone:</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="smsNumber" placeholder="Ex: +5511999999999">
+                <button class="btn btn-primary" onclick="insertValue('smsNumber', 'smsDisplay')">Inserir</button>
+            </div>
+            <div id="smsDisplay" class="mt-2 alert alert-info d-none"></div>
+        </div>
+
+        <div id="pushInput" class="mt-2 d-none">
+            <label for="deviceId" class="form-label">Device ID do WirePusher:</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="deviceId" placeholder="Insira seu Device ID">
+                <button class="btn btn-primary" onclick="insertValue('deviceId', 'pushDisplay')">Inserir</button>
+            </div>
+            <small class="form-text text-muted" style="color: #ed4e46 !important; font-size: 0.7em;">
+                * Instale o app WirePusher no seu celular e gere o Device ID.
+            </small>
+            <div id="pushDisplay" class="mt-2 alert alert-info d-none"></div>
+        </div>
+
+        <div id="emailInput" class="mt-2 d-none">
+            <label for="emailAddress" class="form-label">E-mail:</label>
+            <div class="input-group">
+                <input type="email" class="form-control" id="emailAddress" placeholder="seuemail@exemplo.com">
+                <button class="btn btn-primary" onclick="insertValue('emailAddress', 'emailDisplay')">Inserir</button>
+            </div>
+            <div id="emailDisplay" class="mt-2 alert alert-info d-none"></div>
+        </div>
+
+        <!-- Input para Text to Speech -->
+        <div id="ttsInput" class="mt-2 d-none">
+            <label for="ttsMessage" class="form-label">Mensagem para Text to Speech:</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="ttsMessage" placeholder="Digite a mensagem para ser lida">
+                <button class="btn btn-primary" onclick="insertValue('ttsMessage', 'textDisplay')">Inserir</button>
+            </div>
+            <div id="textDisplay" class="mt-2 alert alert-info d-none"></div>
+        </div>
+
+        <!-- Input para Aviso Sonoro -->
+        <div id="soundInput" class="mt-2 d-none">
+            <label for="soundAlertFile" class="form-label">Escolha um arquivo de som:</label>
+            <div class="input-group">
+                <input type="file" class="form-control" id="soundAlertFile" accept="audio/*">
+                <button class="btn btn-primary" onclick="insertValue('soundAlertFile', 'fileDisplay')">Inserir</button>
+            </div>
+            <div id="fileDisplay" class="mt-2 alert alert-info d-none"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const smsOption = document.getElementById("smsOption");
+        const pushOption = document.getElementById("pushOption");
+        const emailOption = document.getElementById("emailOption");
+        const ttsOption = document.getElementById("ttsOption");
+        const soundOption = document.getElementById("soundOption");
+        const noneOption = document.getElementById("noneOption");
+
+        const smsInput = document.getElementById("smsInput");
+        const pushInput = document.getElementById("pushInput");
+        const emailInput = document.getElementById("emailInput");
+        const ttsInput = document.getElementById("ttsInput");
+        const soundInput = document.getElementById("soundInput");
+
+        // Função para alternar os inputs conforme a opção escolhida
+        function toggleInputs() {
+            // Esconde todos os inputs
+            smsInput.classList.add("d-none");
+            pushInput.classList.add("d-none");
+            emailInput.classList.add("d-none");
+            ttsInput.classList.add("d-none");
+            soundInput.classList.add("d-none");
+
+            // Exibe apenas o input relacionado à opção escolhida
+            if (smsOption.checked) smsInput.classList.remove("d-none");
+            if (pushOption.checked) pushInput.classList.remove("d-none");
+            if (emailOption.checked) emailInput.classList.remove("d-none");
+            if (ttsOption.checked) ttsInput.classList.remove("d-none");
+            if (soundOption.checked) soundInput.classList.remove("d-none");
+        }
+
+        // Event listeners para as opções de notificação
+        smsOption.addEventListener("change", toggleInputs);
+        pushOption.addEventListener("change", toggleInputs);
+        emailOption.addEventListener("change", toggleInputs);
+        ttsOption.addEventListener("change", toggleInputs);
+        soundOption.addEventListener("change", toggleInputs);
+        noneOption.addEventListener("change", toggleInputs);
+    });
+
+    function insertValue(inputId, displayId) {
+        const input = document.getElementById(inputId);
+        const display = document.getElementById(displayId);
+
+        if (input.value.trim() !== "") {
+            display.textContent = `Notificação para: ${input.value}`;
+            display.classList.remove("d-none");
+        }
+    }
+</script>

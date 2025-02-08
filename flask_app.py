@@ -10,6 +10,11 @@ import cv2
 from tempfile import NamedTemporaryFile
 import io
 import json
+from alertPushNotification import send_wirepusher_notification
+from alertSMSNotification import send_twilio_sms_notification
+from alertEmailNotification import send_email_notification
+from alertTextToSpeechNotification import send_tts_notification
+from alertSoundNotification import send_sound_alert_notification
 
 # Load environment variables
 load_dotenv()
@@ -227,6 +232,58 @@ def detect_webcam():
             
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
+@app.route('/api/send_notification', methods=['POST'])
+def send_notification():
+    data = request.json
+    detection_mode = data.get('detection_mode')  # (imagem, vídeo ou webcam)
+    notification_type = data.get('notification_type')  # Tipo de notificação (push, por exemplo)
+    device_id = data.get('device_id')  # ID do dispositivo para WirePusher
+    sms_number = data.get('sms_number')  # Número de telefone para SMS
+    email_address = data.get('email_address')  # Endereço de e-mail para notificação por e-mail
+    tts_message = data.get('tts_message')  # Mensagem para notificação por Text to Speech
+    sound_alert_file = data.get('sound_alert_file')  # Arquivo de som para notificação por Aviso Sonoro
+
+    if notification_type == 'sms' and sms_number:
+        try:
+            send_twilio_sms_notification(sms_number, detection_mode)
+            return jsonify({"status": "success", "message": "SMS enviado com sucesso."}), 200
+        except Exception as e:
+            return jsonify({"status": "error", "message": f"Falha ao enviar o SMS: {str(e)}"}), 500
+    
+    elif notification_type == 'push' and device_id:
+        try:
+            send_wirepusher_notification(device_id, detection_mode)
+            return jsonify({"status": "success", "message": "Notificação enviada com sucesso."}), 200
+        except Exception as e:
+            return jsonify({"status": "error", "message": f"Falha ao enviar a notificação: {str(e)}"}), 500
+        
+    elif notification_type == 'email' and email_address:
+        try:
+            send_email_notification(email_address, detection_mode)
+            return jsonify({"status": "success", "message": "Notificação enviada com sucesso."}), 200
+        except Exception as e:
+            return jsonify({"status": "error", "message": f"Falha ao enviar a notificação: {str(e)}"}), 500
+        
+    elif notification_type == 'textToSpeech' and tts_message:
+        try:
+            send_tts_notification(tts_message, detection_mode)
+            return jsonify({"status": "success", "message": "Notificação enviada com sucesso."}), 200
+        except Exception as e:
+            return jsonify({"status": "error", "message": f"Falha ao enviar a notificação: {str(e)}"}), 500
+        
+    elif notification_type == 'soundAlert' and sound_alert_file:
+        try:
+            send_sound_alert_notification(sound_alert_file, detection_mode)
+            return jsonify({"status": "success", "message": "Notificação enviada com sucesso."}), 200
+        except Exception as e:
+            return jsonify({"status": "error", "message": f"Falha ao enviar a notificação: {str(e)}"}), 500
+    
+    else:
+        return jsonify({"status": "error", "message": "Dados inválidos ou faltando."}), 400
+
+
 
 if __name__ == '__main__':
     # Use the PORT environment variable provided by Cloud Run
