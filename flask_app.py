@@ -16,6 +16,7 @@ from alertEmailNotification import send_email_notification
 from alertTextToSpeechNotification import send_tts_notification
 from alertSoundNotification import send_sound_alert_notification
 
+
 # Load environment variables
 load_dotenv()
 
