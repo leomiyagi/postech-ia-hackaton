@@ -33,8 +33,8 @@ def send_tts_notification(tts_message, detection_mode):
     """
     if not tts_message:
         print("Mensagem TTS está vazia. Uma notificação genérica será enviada.")
-        mensagem_tts = f"Alerta: Objeto cortante detectado!!! Origem: {detection_mode}"
-        return
+        tts_message = f"Alerta: Objeto cortante detectado!!! Origem: {detection_mode}"
+        #return
 
     try:
         # Cria a mensagem TTS incluindo detection_mode
