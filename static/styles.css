@@ -23,6 +23,7 @@ body {
 .danger-alert {
     background-color: red; /* Cor de fundo no alerta */
     font-size: 20px; /* Tamanho da fonte */
+    color: #FFFFFF; /* Cor do texto no alerta */
     font-weight: bold; /* Peso da fonte */
     border-radius: 5px; /* Bordas arredondadas */
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para realçar */

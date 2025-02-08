@@ -17,15 +17,19 @@ gunicorn
 
 # Streamlit and its dependencies
 streamlit
-streamlit-webrtc
+#streamlit-webrtc
 av
 matplotlib
 pandas
 PyYAML
 
+# Twilio
+twilio
 
-#text to speech
-gTTS
+#gtts
+gtts
+
+#pygame
 pygame
 
 # Optional dependencies
