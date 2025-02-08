@@ -70,6 +70,17 @@
         <div id="loadingIndicator" class="processing-text d-none">
             Processando...
         </div>
+       
+        <div id="notificationsCard" style="display: none;">
+            {% include 'notifications.html' %}
+        </div>
+
+        <div class="alert alert-success d-flex align-items-center d-none" id="notificationSentAlert" role="alert">
+            <div>
+                Notificação enviada com sucesso!
+            </div>
+        </div>
+       
         <div class="card mb-4" id="uploadCard" style="display: none;">
             <div class="card-body" id="uploadCardBody">
                 <h5 class="card-title">Upload de Arquivo</h5>

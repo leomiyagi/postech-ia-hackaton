@@ -7,6 +7,7 @@ function showConfidenceSliderAndUploadCard() {
     const confidenceSlider = document.getElementById('confidenceSlider');
     const uploadCard = document.getElementById('uploadCard');
     const webcamCard = document.getElementById('webcamCard');
+    const notificationsCard = document.getElementById('notificationsCard');
     
     clearAlerts();
     clearFileInputAndPreviews();
@@ -24,6 +25,7 @@ function showConfidenceSliderAndUploadCard() {
         }
     });
     confidenceSlider.style.display = 'block';
+    notificationsCard.style.display = 'block';
     
     if (mode === 'webcam') {
         uploadCard.style.display = 'none';
@@ -48,9 +50,45 @@ function triggerAlert(hasDetections) {
     if (hasDetections) {
         document.getElementById('detectedObjectsAlert').classList.remove('d-none');
         document.getElementById('noDetectionsAlert').classList.add('d-none');
+
+        sendAlert();
     } else {
         document.getElementById('noDetectionsAlert').classList.remove('d-none');
         document.getElementById('detectedObjectsAlert').classList.add('d-none');
+    }
+}
+
+async function sendAlert() {
+    console.log('---sendAlert---');
+
+    const detectionMode = document.getElementById('detectionMode').value;
+    const notificationType = document.querySelector('input[name="notificationType"]:checked')?.value;
+    const deviceId = document.getElementById('deviceId').value;
+    const smsNumber = document.getElementById('smsNumber').value;
+
+    const data = {
+        detection_mode: detectionMode,
+        notification_type: notificationType,
+        device_id: deviceId,
+        sms_number: smsNumber
+    };
+
+    try {
+        const response = await fetch('/api/send_notification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        // Lógica para processar a resposta, se necessário
+        const result = await response.json();
+        document.getElementById("notificationSentAlert").classList.remove("d-none");
+        console.log('Notification sent successfully:', result);
+        
+    } catch (error) {
+        console.error('Error:', error);
     }
 }
 
