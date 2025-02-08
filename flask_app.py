@@ -16,6 +16,7 @@ from alertEmailNotification import send_email_notification
 from alertTextToSpeechNotification import send_tts_notification
 from alertSoundNotification import send_sound_alert_notification
 
+
 # Load environment variables
 load_dotenv()
 
@@ -243,7 +244,13 @@ def send_notification():
     sms_number = data.get('sms_number')  # Número de telefone para SMS
     email_address = data.get('email_address')  # Endereço de e-mail para notificação por e-mail
     tts_message = data.get('tts_message')  # Mensagem para notificação por Text to Speech
-    sound_alert_file = data.get('sound_alert_file')  # Arquivo de som para notificação por Aviso Sonoro
+    sound_alert_file = data.get('sound_alert_file')
+    # Arquivo de som para notificação por Aviso Sonoro
+    
+    # Verifica se o campo 'tts_message' está vazio e, se sim, preenche com uma mensagem padrão
+    if not tts_message:
+        tts_message = f"Alerta: Objeto cortante detectado!!! Origem: {detection_mode}"
+
 
     if notification_type == 'sms' and sms_number:
         try:
@@ -268,7 +275,7 @@ def send_notification():
         
     elif notification_type == 'textToSpeech' and tts_message:
         try:
-            send_tts_notification(tts_message, detection_mode)
+            send_tts_notification(tts_message = tts_message, detection_mode=detection_mode)
             return jsonify({"status": "success", "message": "Notificação enviada com sucesso."}), 200
         except Exception as e:
             return jsonify({"status": "error", "message": f"Falha ao enviar a notificação: {str(e)}"}), 500

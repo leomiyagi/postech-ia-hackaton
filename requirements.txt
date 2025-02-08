@@ -23,5 +23,10 @@ matplotlib
 pandas
 PyYAML
 
+
+#text to speech
+gTTS
+pygame
+
 # Optional dependencies
 psutil
