@@ -1,4 +1,3 @@
-# TODO: Implementar envio de notificação por Text to Speech
 from gtts import gTTS
 import os
 import pygame  # Importar pygame no início
