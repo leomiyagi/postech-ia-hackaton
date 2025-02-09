@@ -244,8 +244,7 @@ def send_notification():
     sms_number = data.get('sms_number')  # Número de telefone para SMS
     email_address = data.get('email_address')  # Endereço de e-mail para notificação por e-mail
     tts_message = data.get('tts_message')  # Mensagem para notificação por Text to Speech
-    sound_alert_file = data.get('sound_alert_file')
-    # Arquivo de som para notificação por Aviso Sonoro
+    sound_alert_file = data.get('sound_alert_file') # Arquivo de som para notificação por Aviso Sonoro
     
     # Verifica se o campo 'tts_message' está vazio e, se sim, preenche com uma mensagem padrão
     if not tts_message:
