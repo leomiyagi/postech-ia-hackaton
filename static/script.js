@@ -61,11 +61,31 @@ function triggerAlert(hasDetections) {
         document.getElementById('detectedObjectsAlert').classList.remove('d-none');
         document.getElementById('noDetectionsAlert').classList.add('d-none');
 
-        sendAlert();
+        const notificationType = document.querySelector('input[name="notificationType"]:checked')?.value;
+        if (notificationType !== 'none' && notificationType !== undefined) {
+            sendAlert();
+        }
     } else {
         document.getElementById('noDetectionsAlert').classList.remove('d-none');
         document.getElementById('detectedObjectsAlert').classList.add('d-none');
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const notificationAlert = document.getElementById("notificationSentAlert");
+    
+        // Função para esconder o alerta
+        function hideNotificationAlert() {
+            notificationAlert.classList.add("d-none");
+        }
+    
+        // Adiciona eventos para esconder o alerta quando houver interação
+        document.getElementById('deviceId')?.addEventListener('input', hideNotificationAlert);
+        document.getElementById('detectionMode')?.addEventListener('change', hideNotificationAlert);
+        document.getElementById('phoneNumber')?.addEventListener('input', hideNotificationAlert);
+        document.querySelectorAll('input[name="notificationType"]').forEach(input => {
+            input.addEventListener('change', hideNotificationAlert);
+        });
+    });
 }
 
 async function sendAlert() {

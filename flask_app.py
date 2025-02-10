@@ -49,6 +49,10 @@ def internal_error(error):
 def home():
     return render_template('index.html')
 
+@app.route('/projeto')
+def projeto():
+    return render_template('projeto.html')
+
 def process_video(file, confidence_threshold):
     # Save uploaded video to temp file
     temp_input = NamedTemporaryFile(suffix='.mp4', delete=False)

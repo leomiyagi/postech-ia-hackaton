@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIAP VisionGuard - Detector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <div class="container d-flex align-items-left mt-3">
+        <img src="static/vision.png" alt="FIAP VisionGuard Logo" class="me-3" style="height: 50px;">
+        <div class="d-flex flex-column">
+            <p class="h1">
+                VisionGuard - Detector
+            </p>
+            <p class="h5">
+                FIAP Postech IA - Hackathon Fase 5 - Grupo 19
+            </p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Grupo 19</h5>
+              <p class="card-text">
+                Humberto Maia<br/>
+                Leonardo Miyagi<br/>
+                Luiz Fernando Vilas Fonseca<br/>
+                Luiz Henriques Gonçalves Carneiro de Albuquerque<br/>
+                Rafael Pivetta Balbuena
+              </p>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-body">
+              <h5 class="card-title">Estratégia</h5>
+              <p class="card-text">
+                <ul>
+                  <li>Desenvolver uma rede neural que reconhece objetos cortantes</li>
+                  <li>Treinar o modelo com datasets específicos</li>
+                  <li>Disponibilizar o modelo em uma interface amigável</li>
+                  <li>Implementar um sistema de notificações</li>
+                </ul>
+              </p>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-body">
+              <h5 class="card-title">Desenvolvimento do Modelo</h5>
+              <p class="card-text">
+                <p>A ideia inicial era a de desenvolver uma <b>CNN (Convolutional Neural Network)</b> que reconhecesse objetos cortantes.</p>
+                <p>O primeiro passo foi a seleção de datasets específicos para treinamento do modelo. Optamos por utilizar os datasets <a href="https://universe.roboflow.com/workspace-zqssx/knife-dataset-new">Knife Dataset</a> e <a href="https://universe.roboflow.com/tmynckh/dangerous_object">Dangerous Objects</a> disponíveis no <a href="https://roboflow.com">Roboflow</a>.</p>
+                <p>Ao longo do processo inicial, tentamos utilizar o <b>Keras</b> como base e algum modelo já existente como <i>MobileNetV2</i> ou <i>EfficientNet</i>, mas os resultados não foram muito bons. O modelo considerava muitos objetos como cortantes sendo que não eram, e também perdia alguns que eram óbvios.</p>
+                <p>Decidimos então utilizar como base o modelo <b>YoloV11</b>, que é um modelo já treinado para reconhecimento de objetos. A partir dele, treinamos o modelo com os datasets selecionados.</p>
+                <p>O Jupyter Notebook contendo o código de treinamento do modelo está no repositório em <a href="https://github.com/leomiyagi/postech-ia-hackaton/blob/main/train_yolo.ipynb">train_yolo.ipynb</a></p>
+                <p>Os videos de teste do Hackathon foram processados pelo modelo e também disponibilizados no repositório:<br/>
+                    
+                    <a href="https://github.com/leomiyagi/postech-ia-hackaton/blob/main/output_finetunned.mp4" target="_blank">Video 1</a><br/>
+                    <a href="https://github.com/leomiyagi/postech-ia-hackaton/blob/main/output2_finetunned.mp4" target="_blank">Video 2</a>
+                </p>
+              </p>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-body">
+              <h5 class="card-title">Desenvolvimento do Aplicativo</h5>
+              <p class="card-text">
+                <p>Uma vez que o modelo estava treinado e pronto para uso, partimos para o desenvolvimento da interface.</p>
+                <p>O objetivo era disponibilizar uma ferramenta capaz de obter como entrada uma imagem, video ou webcam e detectar objetos cortantes utilizando o modelo treinado</p>
+                <p>Optamos por utilizar <b>Python</b> com <a href="https://flask.palletsprojects.com/en/stable/">Flask</a> para o desenvolvimento do backend e <b>HTML / Javascript</b> com <a href="https://getbootstrap.com/">Bootstrap</a> para o frontend.</p>
+                <p>Uma imagem <b>Docker</b> do aplicativo é gerado e então publicado na <a href="https://www.digitalocean.com/">Digital Ocean</a></p>
+              </p>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-body">
+              <h5 class="card-title">Sistema de Notificações</h5>
+              <p class="card-text">
+                <p>O sistema primário de notificação é um <b>Alerta Visual</b> na própria ferramenta, quando um objeto cortante é identificado</p>
+                <p>Além disso, implementamos um sistema de <b>Notificação por Email</b> onde a imagem do objeto identificado é enviado para o email informado<br/>
+                    Para isso, utilizamos a biblioteca <a href="https://docs.python.org/3/library/smtplib.html">smtplib</a> do Python</p>
+                <p>Adicionalmente, implementamos o envio de <b>Notificações por SMS</b> utilizando o <a href="https://www.twilio.com/">Twilio</a> como plataforma</p>
+              </p>
+            </div>
+        </div>
+    </div>
+    <footer class="footer mt-3">
+        <div class="container">
+            <span class="text-muted">FIAP VisionGuard - Detector - Grupo 19</span>
+        </div>
+    </footer>
+</body>
+</html>
