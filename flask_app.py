@@ -15,6 +15,7 @@ from alertSMSNotification import send_twilio_sms_notification
 from alertEmailNotification import send_email_notification
 from alertTextToSpeechNotification import send_tts_notification
 from alertSoundNotification import send_sound_alert_notification
+import tempfile
 
 
 # Load environment variables
@@ -55,14 +56,16 @@ def projeto():
 
 def process_video(file, confidence_threshold):
     # Save uploaded video to temp file
-    temp_input = NamedTemporaryFile(suffix='.mp4', delete=False)
-    file.save(temp_input.name)
-    temp_output = NamedTemporaryFile(suffix='.mp4', delete=False)
-    
-    
+    with tempfile.NamedTemporaryFile(suffix='.mp4', delete=False) as temp_input:
+        file.save(temp_input.name)
+        temp_input_path = temp_input.name
+
+    with tempfile.NamedTemporaryFile(suffix='.mp4', delete=False) as temp_output:
+        temp_output_path = temp_output.name
+
     try:
         # Open video capture
-        cap = cv2.VideoCapture(temp_input.name)
+        cap = cv2.VideoCapture(temp_input_path)
         if not cap.isOpened():
             raise ValueError("Could not open video file")
 
@@ -73,11 +76,11 @@ def process_video(file, confidence_threshold):
         
         # Create video writer
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        out = cv2.VideoWriter(temp_output.name, fourcc, fps, (width, height))
+        out = cv2.VideoWriter(temp_output_path, fourcc, fps, (width, height))
 
         has_detections = False
         detections = []
-
+        
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
@@ -102,16 +105,16 @@ def process_video(file, confidence_threshold):
         cap.release()
         out.release()
         
-        return temp_output.name, has_detections, detections
+        return temp_output_path, has_detections, detections
         
     except Exception as e:
         # Clean up temp files in case of error
-        os.unlink(temp_input.name)
-        os.unlink(temp_output.name)
+        os.unlink(temp_input_path)
+        os.unlink(temp_output_path)
         raise e
     finally:
         # Clean up input file
-        os.unlink(temp_input.name)
+        os.unlink(temp_input_path)
 
 @app.route('/api/detect', methods=['POST'])
 def detect_objects():
