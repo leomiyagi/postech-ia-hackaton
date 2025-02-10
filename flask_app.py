@@ -55,6 +55,7 @@ def process_video(file, confidence_threshold):
     file.save(temp_input.name)
     temp_output = NamedTemporaryFile(suffix='.mp4', delete=False)
     
+    
     try:
         # Open video capture
         cap = cv2.VideoCapture(temp_input.name)

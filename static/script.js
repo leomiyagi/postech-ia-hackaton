@@ -142,9 +142,9 @@ async function detectObjects() {
     }
 
     // Check file size (limit to 5 MB)
-    const fileSizeLimit = 5 * 1024 * 1024; // 5 MB in bytes
+    const fileSizeLimit = 70 * 1024 * 1024; // 70 MB in bytes
     if (file.size > fileSizeLimit) {
-        alert('O arquivo excede o limite de tamanho de 5 MB');
+        alert('O arquivo excede o limite de tamanho de 70 MB');
         document.getElementById('loadingIndicator').classList.add('d-none');
         document.getElementById('uploadCardBody').classList.remove('d-none');
         return;
