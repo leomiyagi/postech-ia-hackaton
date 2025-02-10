@@ -3,7 +3,7 @@ import os
 import pygame  # Importar pygame no início
 import threading
 
-pygame.mixer.init()
+# pygame.mixer.init()
 
 # Função para gerar o arquivo de áudio TTS
 def Gerar_tts(text, file_path):
