@@ -185,8 +185,13 @@ async function detectObjects() {
                 reader.onerror = reject;
                 reader.readAsDataURL(blob);
             });
+        }
 
-            console.log('image_base64:', image_base64);
+        if (file.type.startsWith('video/')) {
+            const imageDetection = JSON.parse(response.headers.get('X-Detection-Image'));
+            if (imageDetection) {
+                image_base64 = imageDetection.image;
+            }
         }
 
         // Update alert visibility based on detections

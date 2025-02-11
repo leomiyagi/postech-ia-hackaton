@@ -14,6 +14,7 @@ from alertSMSNotification import send_twilio_sms_notification
 from alertEmailNotification import send_email_notification
 import tempfile
 from Rastrear import *
+import base64
 
 # Load environment variables
 load_dotenv()
@@ -77,6 +78,8 @@ def process_video(file, confidence_threshold):
 
         has_detections = False
         detections = []
+
+        first_detection_frame = None
         
         while cap.isOpened():
             ret, frame = cap.read()
@@ -94,6 +97,10 @@ def process_video(file, confidence_threshold):
                     detections.append({
                         'confidence': float(box.conf.item())
                     })
+
+                # Save first frame with detections
+                if first_detection_frame is None:
+                    first_detection_frame = annotated_frame.copy()
             
             # Write frame
             out.write(annotated_frame)
@@ -102,7 +109,7 @@ def process_video(file, confidence_threshold):
         cap.release()
         out.release()
         
-        return temp_output_path, has_detections, detections
+        return temp_output_path, has_detections, detections, first_detection_frame
         
     except Exception as e:
         # Clean up temp files in case of error
@@ -125,7 +132,7 @@ def detect_objects():
         
         if file.filename.lower().endswith(('.mp4', '.avi', '.mov')):
             
-            output_video_path, has_detections, detections = process_video(file, confidence_threshold)
+            output_video_path, has_detections, detections, first_detection_frame = process_video(file, confidence_threshold)
             
             # Return video file
             response = make_response(send_file(
@@ -139,6 +146,21 @@ def detect_objects():
                 'has_detections': has_detections,
                 'detections': detections
             })
+            
+            if first_detection_frame is not None:
+                # Convert frame to PIL Image
+                frame_image = Image.fromarray(cv2.cvtColor(first_detection_frame, cv2.COLOR_BGR2RGB))
+                
+                # Save to bytes
+                img_byte_arr = io.BytesIO()
+                frame_image.save(img_byte_arr, format='JPEG')
+                img_byte_arr.seek(0)
+                
+                # Add image to response
+                img_base64 = base64.b64encode(img_byte_arr.getvalue()).decode('utf-8')
+                response.headers['X-Detection-Image'] = json.dumps({
+                    'image': img_base64
+                })
             
             return response
         else:
