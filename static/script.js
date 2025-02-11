@@ -56,7 +56,7 @@ function showConfidenceSliderAndUploadCard() {
     });
 }
 
-function triggerAlert(hasDetections) {
+function triggerAlert(hasDetections, image_base64) {
     
     if (hasDetections) {
         document.getElementById('detectedObjectsAlert').classList.remove('d-none');
@@ -64,7 +64,7 @@ function triggerAlert(hasDetections) {
 
         const notificationType = document.querySelector('input[name="notificationType"]:checked')?.value;
         if (notificationType !== 'none' && notificationType !== undefined) {
-            sendAlert();
+            sendAlert(image_base64);
         }
     } else {
         document.getElementById('noDetectionsAlert').classList.remove('d-none');
@@ -73,7 +73,7 @@ function triggerAlert(hasDetections) {
     
 }
 
-async function sendAlert() {
+async function sendAlert(image_base64) {
     console.log('---sendAlert---');
 
     const detectionMode = document.getElementById('detectionMode').value;
@@ -86,6 +86,7 @@ async function sendAlert() {
         notification_type: notificationType,
         sms_number: smsNumber,
         email_address: emailAddress,
+        image_base64: image_base64
     };
 
     try {
@@ -172,17 +173,30 @@ async function detectObjects() {
 
         // Get detection data from headers
         const detectionData = JSON.parse(response.headers.get('X-Detections'));
-        
+
+        const blob = await response.blob();
+
+        let image_base64 = null;
+
+        if (file.type.startsWith('image/')) {
+            image_base64 = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+
+            console.log('image_base64:', image_base64);
+        }
+
         // Update alert visibility based on detections
-        triggerAlert(detectionData.has_detections);
+        triggerAlert(detectionData.has_detections, image_base64);
 
         const processedImage = document.getElementById('processedImage');
         const processedVideo = document.getElementById('processedVideo');
         
         processedImage.style.display = 'none';
         processedVideo.style.display = 'none';
-
-        const blob = await response.blob();
 
         if (file.type.startsWith('image/')) {
             processedImage.src = URL.createObjectURL(blob);
@@ -319,11 +333,18 @@ async function detectWebcam() {
                 }
             });
             
-            if (newDetections) {
-                triggerAlert(detectionData.has_detections);
-            }
-            
             const blob = await response.blob();
+
+            if (newDetections) {
+                const image_base64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+                triggerAlert(detectionData.has_detections, image_base64);
+            }
+
             const imgUrl = URL.createObjectURL(blob);
             const img = new Image();
             
@@ -341,9 +362,9 @@ async function detectWebcam() {
                     timestamp.textContent = new Date().toLocaleTimeString();
 
                     if (newDetections) { 
-                    container.appendChild(detectedImg);
-                    container.appendChild(timestamp);
-                    gallery.insertBefore(container, gallery.firstChild);
+                        container.appendChild(detectedImg);
+                        container.appendChild(timestamp);
+                        gallery.insertBefore(container, gallery.firstChild);
                     }
 
                     // Keep only last 10 detections

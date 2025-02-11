@@ -271,6 +271,7 @@ def send_notification():
     notification_type = data.get('notification_type')  # Tipo de notificação (push, por exemplo)
     sms_number = data.get('sms_number')  # Número de telefone para SMS
     email_address = data.get('email_address')  # Endereço de e-mail para notificação por e-mail
+    image_base64 = data.get('image_base64')  # Imagem em base64 para notificação por e-mail
     
     if notification_type == 'sms' and sms_number:
         try:
@@ -281,7 +282,7 @@ def send_notification():
     
     elif notification_type == 'email' and email_address:
         try:
-            send_email_notification(email_address, detection_mode)
+            send_email_notification(email_address, detection_mode, image_base64)
             return jsonify({"status": "success", "message": "E-mail enviado com sucesso."}), 200
         except Exception as e:
             return jsonify({"status": "error", "message": f"Falha ao enviar a notificação: {str(e)}"}), 500
