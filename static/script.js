@@ -70,23 +70,7 @@ function triggerAlert(hasDetections) {
         document.getElementById('noDetectionsAlert').classList.remove('d-none');
         document.getElementById('detectedObjectsAlert').classList.add('d-none');
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const notificationAlert = document.getElementById("notificationSentAlert");
     
-        // Função para esconder o alerta
-        function hideNotificationAlert() {
-            notificationAlert.classList.add("d-none");
-        }
-    
-        // Adiciona eventos para esconder o alerta quando houver interação
-        document.getElementById('deviceId')?.addEventListener('input', hideNotificationAlert);
-        document.getElementById('detectionMode')?.addEventListener('change', hideNotificationAlert);
-        document.getElementById('phoneNumber')?.addEventListener('input', hideNotificationAlert);
-        document.querySelectorAll('input[name="notificationType"]').forEach(input => {
-            input.addEventListener('change', hideNotificationAlert);
-        });
-    });
 }
 
 async function sendAlert() {
@@ -94,20 +78,14 @@ async function sendAlert() {
 
     const detectionMode = document.getElementById('detectionMode').value;
     const notificationType = document.querySelector('input[name="notificationType"]:checked')?.value;
-    const deviceId = document.getElementById('deviceId').value;
     const smsNumber = document.getElementById('smsNumber').value;
     const emailAddress = document.getElementById('emailAddress').value;
-    const ttsMessage = document.getElementById('ttsMessage').value;
-    const soundAlertFile = document.getElementById('soundAlertFile').value;
 
     const data = {
         detection_mode: detectionMode,
         notification_type: notificationType,
-        device_id: deviceId,
         sms_number: smsNumber,
         email_address: emailAddress,
-        tts_message: ttsMessage,
-        sound_alert_file: soundAlertFile
     };
 
     try {
@@ -126,6 +104,13 @@ async function sendAlert() {
         
     } catch (error) {
         console.error('Error:', error);
+    }
+}
+
+function clearNotificationSentAlert() {
+    const notificationAlert = document.getElementById('notificationSentAlert');
+    if (notificationAlert) {
+        notificationAlert.classList.add('d-none');
     }
 }
 
