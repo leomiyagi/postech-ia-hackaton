@@ -78,7 +78,7 @@ async function sendAlert(image_base64) {
 
     const detectionMode = document.getElementById('detectionMode').value;
     const notificationType = document.querySelector('input[name="notificationType"]:checked')?.value;
-    const smsNumber = document.getElementById('smsNumber').value;
+    const smsNumber = "+55" + document.getElementById('smsNumber').value;
     const emailAddress = document.getElementById('emailAddress').value;
 
     const data = {
