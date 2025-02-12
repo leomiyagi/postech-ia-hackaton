@@ -1,0 +1,14 @@
+# Ignorar diretórios de ambiente virtual e cache do Python
+env/
+__pycache__/
+
+# Ignorar arquivos do Git
+.git/
+.gitignore
+
+# Ignorar arquivos
+*.mp4
+
+# Ignorar arquivos que não são necessários para rodar a aplicação
+LICENSE
+README.md
